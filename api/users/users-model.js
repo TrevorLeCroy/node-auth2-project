@@ -1,6 +1,6 @@
 const db = require('../../data/db-config.js');
 
-function find() {
+const find = async () => {
   /**
     You will need to join two tables.
     Resolves to an ARRAY with all users.
@@ -18,9 +18,14 @@ function find() {
       }
     ]
    */
+  return await db('users as u')
+         .select('u.user_id', 'u.username', 'r.role_name')
+         .leftJoin('roles as r', 'u.role_id', 'r.role_id')
+         .groupBy('u.role_id')
+         .orderBy('u.role_id', 'asc');
 }
 
-function findBy(filter) {
+const findBy = async (filter) => {
   /**
     You will need to join two tables.
     Resolves to an ARRAY with all users that match the filter condition.
@@ -34,9 +39,13 @@ function findBy(filter) {
       }
     ]
    */
+    return await db('users as u')
+                 .select('u.user_id', 'u.username', 'u.password', 'r.role_name')
+                 .leftJoin('roles as r', 'u.role_id', 'r.role_id')
+                 .where(filter).first();
 }
 
-function findById(user_id) {
+const findById = async (user_id) => {
   /**
     You will need to join two tables.
     Resolves to the user with the given user_id.
@@ -47,6 +56,10 @@ function findById(user_id) {
       "role_name": "instructor"
     }
    */
+    return await db('users as u')
+                 .select('u.user_id', 'u.username', 'r.role_name')
+                 .leftJoin('roles as r', 'u.role_id', 'r.role_id')
+                 .where('user_id', user_id).first();
 }
 
 /**
